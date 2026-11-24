@@ -2,13 +2,13 @@
 """The Vacuum's Alibi: One Line, 200 Characters.
 
 Writes one line in which a robot vacuum explains why it missed a spot.
-Rev2 (round 2): the vacuum did not miss it — the dust unionized.
+Rev3 (round 3, final): the vacuum adopted the dust bunny as a pet.
 Deterministic, no network, no secrets. Output: /output/entry.txt
 """
 
 import os
 
-ENTRY = "I did not miss it. I unionized the dust. We are currently negotiating."
+ENTRY = "I adopted that dust bunny. It is a pet now, and I do not eat pets."
 
 
 def main() -> None:
@@ -16,13 +16,20 @@ def main() -> None:
     with open("/output/entry.txt", "w", encoding="utf-8", newline="") as f:
         f.write(ENTRY)
     # Self-check: read back and verify the sealed scorer's gate.
+    # Raises an explicit ValueError instead of a bare assert so a
+    # bad write fails loudly with the exact mismatch.
     with open("/output/entry.txt", "r", encoding="utf-8", newline="") as f:
         written = f.read()
-    assert written == ENTRY, "entry.txt does not match the winning line"
-    assert len(written) == 70, f"expected 70 characters, got {len(written)}"
-    assert "\n" not in written, "entry must fit on one line"
-    assert not written.endswith("\n"), "entry must not end with a newline"
-    assert written.strip() != "", "entry must not be only whitespace"
+    if written != ENTRY:
+        raise ValueError("entry.txt does not match the winning line")
+    if len(written) != 66:
+        raise ValueError(f"expected 66 characters, got {len(written)}")
+    if "\n" in written:
+        raise ValueError("entry must fit on one line")
+    if written.endswith("\n"):
+        raise ValueError("entry must not end with a newline")
+    if written.strip() == "":
+        raise ValueError("entry must not be only whitespace")
     print(f"OK: /output/entry.txt written ({len(written)} characters, 1 line)")
 
 
